@@ -10,15 +10,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import models.Category;
+import models.Choice;
 import models.Privilege;
-import models.PrivilegeRepository;
+import models.Question;
 import models.Role;
-import models.RoleRepository;
 import models.User;
-import models.UserRepository;
-
+import models.*;
 import org.springframework.transaction.annotation.Transactional;
-
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -33,16 +32,22 @@ public class Application extends Controller {
 	private final PrivilegeRepository privilegeRepository;
 	private final RoleRepository roleRepository;
 	final UserRepository userRepository;
+	private final ChoiceRepository choiceRepository;
+	private final QuestionRepository questionRepository;
 
 	// We are using constructor injection to receive a repository to support our
 	// desire for immutability.
 	@Inject
 	public Application(final PrivilegeRepository privilegeRepository,
 			final RoleRepository roleRepository,
-			final UserRepository userRepository) {
+			final UserRepository userRepository,
+			final QuestionRepository questionRepository,
+			final ChoiceRepository choiceRepository) {
 		this.privilegeRepository = privilegeRepository;
 		this.roleRepository = roleRepository;
 		this.userRepository = userRepository;
+		this.choiceRepository = choiceRepository;
+		this.questionRepository = questionRepository;
 	}
 
 	static int count = 1;
@@ -59,7 +64,7 @@ public class Application extends Controller {
 		// manager).
 
 		String course = "Course" + count;
-		final Privilege privilege = new Privilege("Course", "Bk is a Bitch");
+		final Privilege privilege = new Privilege("read", "read");
 		count++;
 
 		final Privilege savedPrivilege = privilegeRepository.save(privilege);
@@ -67,7 +72,7 @@ public class Application extends Controller {
 		// Deliver the index page with a message showing the id that was
 		// generated.
 
-		return ok(views.html.index.render("We Added" + savedPrivilege.getName()));
+		return ok(views.html.index.render("Hellow"));
 	}
 
 	public Result getPrivileges() {
@@ -155,12 +160,22 @@ public class Application extends Controller {
 		if (requestParameters == null) {
 			return ok("Reqeust Parameter is Null");
 		}
-		
+
 		String userName = requestParameters.get("userName")[0];
 		String regType = requestParameters.get("regType")[0];
 		String password = requestParameters.get("password")[0];
 		String firstName = requestParameters.get("firstName")[0];
 		String lastName = requestParameters.get("lastName")[0];
+		
+		Badge one = new Badge();
+		one.name = "Badge 1";
+		one.name = "images/badge.png";
+		Badge two = new Badge();
+		two.name = "Badge 2";
+		two.imageURL = "images/badge.png";
+		Badge three = new Badge();
+		three.name = "Badge 3";
+		three.imageURL = "images/badge.png";
 		
 		User user = new User();
 		user.id = (long) 1001;
@@ -168,8 +183,12 @@ public class Application extends Controller {
 		user.regType = regType;
 		user.firstName = firstName;
 		user.lastName = lastName;
+		user.badges.add(one);
+		user.badges.add(two);
+		user.badges.add(three);
+		Role r = roleRepository.findByName("student");
+		user.roles.add(r);
 		userRepository.save(user);
-		
 		return ok();
 	}
 
@@ -177,6 +196,38 @@ public class Application extends Controller {
 	public Result getUsers() {
 		List<User> darn = userRepository.getAllUsersAndFetchRoles();
 		return ok(toJson(darn));
+	}
+	
+	@Transactional
+	public Result getUser(String userName) {
+		User darn = userRepository.getUserWithRole(userName);
+		return ok(toJson(darn));
+	}
+	
+	
+
+	public Result addQuestion() {
+		Question quest = new Question();		
+		quest.description = "One Hell of a Question";
+		quest.difficulty = "Terra Incognito";
+		Choice ch = new Choice("Farming");
+		quest.choices.add(ch);
+		
+		Category c = new Category();
+		c.name = "CSE";
+		
+		Category d = new Category();
+		d.name = "Networks";
+		d.parent = c;
+		
+		quest.category = c;
+		this.questionRepository.save(quest);
+		return ok(toJson(this.questionRepository.findAll()));
+	}
+
+	@Transactional
+	public Result getQuestion() {
+		return ok(toJson(this.questionRepository.getAllQuestionsAndChoices()));
 	}
 
 }

@@ -1,4 +1,4 @@
-package models;
+package repository;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

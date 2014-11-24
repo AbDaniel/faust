@@ -1,14 +1,14 @@
 package models;
 
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import models.Role;
+import models.Choice;
 
 import org.springframework.data.repository.CrudRepository;
 
 @Named
 @Singleton
-public interface RoleRepository extends CrudRepository<Role, Long> {
-	Role findByName(String name);
+public interface ChoiceRepository extends CrudRepository<Choice, Long> {
 }
