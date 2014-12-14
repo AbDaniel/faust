@@ -1,4 +1,4 @@
-name := """faust"""
+name := """play-spring-data-jpa"""
 
 version := "1.0-SNAPSHOT"
 

@@ -1,0 +1,10 @@
+body{
+    background-color: #fff;
+    color: #000;
+}
+faust-text-center{
+    text-align: center;   
+}
+faust-border-testing{
+    border: 1px solid black;   
+}

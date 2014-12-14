@@ -4,16 +4,26 @@
 
 # Home page - we use the @controllers syntax here so that the router knows we are referring to a class. In turn it
 # will call on the GlobalSettings.getController method to resolve the actual controller instance.
-GET     /                           @controllers.Application.index
-GET		/privilege					@controllers.Application.getPrivileges
-POST	/role						@controllers.Application.addRole
-PUT		/role/:key					@controllers.Application.updateRole(key :String)
-GET		/role						@controllers.Application.getAllRoles
-GET		/role/:name					@controllers.Application.getRole(name :String)
-DELETE	/role/:name					@controllers.Application.deleteRole(name :String)
-GET		/users						@controllers.Application.getUsers
-POST	/user						@controllers.Application.addUser
+GET     /     						controllers.Assets.at(path="/public", file="index.html")
 
+#USER MODULE
+
+GET		/privilege					@controllers.UserController.getPrivileges
+POST	/role						@controllers.UserController.addRole
+PUT		/role/:key					@controllers.UserController.updateRole(key :String)
+GET		/role						@controllers.UserController.getAllRoles
+GET		/role/:name					@controllers.UserController.getRole(name :String)
+DELETE	/role/:name					@controllers.UserController.deleteRole(name :String)
+POST	/user						@controllers.UserController.addUser
+GET		/users						@controllers.UserController.getUsers
+GET		/user/:userName				@controllers.UserController.getUser(userName :String)
+
+#Question
+POST	/question					@controllers.Application.addQuestion
+GET		/questions					@controllers.Application.getQuestion
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+
+GET 	/css/*file				controllers.Assets.at(path="/public/css", file)
